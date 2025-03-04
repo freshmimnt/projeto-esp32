@@ -1,0 +1,26 @@
+.control-container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    text-align: center;
+  }
+  
+  .control-buttons button {
+    margin: 5px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .control-buttons .stop {
+    background-color: red;
+    color: white;
+  }
+  
+  .control-buttons .start {
+    background-color: green;
+    color: white;
+  }
+  
