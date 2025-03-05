@@ -1,11 +1,10 @@
 .control-panel-container {
   display: flex;
-  width: 100%;
+  width: 97%;
   gap: 20px;
   padding: 20px;
 }
 
-/* ----- Left Side ----- */
 .control-container {
   flex: 1;
   background: white;
@@ -15,7 +14,6 @@
   text-align: center;
 }
 
-/* --- Buttons_layout --- */
 .control-buttons {
   display: flex;
   flex-direction: column;
@@ -34,7 +32,6 @@
   margin-top: 10px;
 }
 
-/* ------- Buttons -------- */
 .control-buttons button {
   margin: 5px;
   padding: 12px 20px;
@@ -56,7 +53,6 @@
   border-radius: 8px;
 }
 
-/* -------- Right Side --------- */
 .route-container {
   flex: 1;
   background: white;
