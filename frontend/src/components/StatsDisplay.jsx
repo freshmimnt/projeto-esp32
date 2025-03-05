@@ -2,16 +2,31 @@ import "../styles/statsDisplay.css";
 
 const StatsDisplay = () => {
   return (
-    <div className="stats-container">
-      <h2>Vehicle Stats</h2>
-      <ul>
-        <li>Reaction Time: <span>0.5s</span></li>
-        <li>Battery: <span>85%</span></li>
-        <li>Velocity: <span>2.4 m/s</span></li>
-        <li>Inclination: <span>15°</span></li>
-        <li>Distance to Obstacle: <span>30 cm</span></li>
-        <li>Time Taken: <span>1m 20s</span></li>
-      </ul>
+    <div className="stats-grid">
+      <div className="stats-box">
+        <h2>Reaction Time:</h2>
+        <span>0.5s</span>
+      </div>
+      <div className="stats-box">
+        <h2>Battery:</h2>
+        <span>85%</span>
+      </div>
+      <div className="stats-box">
+        <h2>Velocity:</h2>
+        <span>2.4 m/s</span>
+      </div>
+      <div className="stats-box">
+        <h2>Inclination:</h2>
+        <span>15°</span>
+      </div>
+      <div className="stats-box">
+        <h2>Distance to Obstacle:</h2>
+        <span>30 cm</span>
+      </div>
+      <div className="stats-box">
+        <h2>Time Taken:</h2>
+        <span>1m 20s</span>
+      </div>
     </div>
   );
 };

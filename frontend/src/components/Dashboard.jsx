@@ -9,7 +9,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <h1>Vehicle Dashboard</h1>
+        <h2>Dashboard</h2>
         <button onClick={() => navigate("/")} className="logout-btn">
           Logout
         </button>

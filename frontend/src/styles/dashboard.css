@@ -1,7 +1,8 @@
 .dashboard-container {
-    padding: 20px;
-    background-color: #f8f9fa;
-    min-height: 100vh;
+    padding: 15px;
+    background-color: #f6f6f6;
+    border-radius: 5px;
+    min-height: 90vh;
   }
   
   .dashboard-header {
@@ -12,8 +13,9 @@
   }
   
   .logout-btn {
-    background-color: red;
+    background-color: rgb(167, 0, 0);
     color: white;
+    border-radius: 5px;
     border: none;
     padding: 8px 15px;
     cursor: pointer;
