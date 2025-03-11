@@ -23,3 +23,10 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+
+
+
+// show the state of the vehicle 
+// add anoother page where i could show the data almost all that is saved in the data base
