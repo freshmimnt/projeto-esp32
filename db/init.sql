@@ -1,5 +1,5 @@
 -- Create table users
-CREATE TABLE seller_categories (
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name TEXT,
     password TEXT,
