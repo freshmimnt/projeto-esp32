@@ -13,7 +13,7 @@ const ControlPanel = () => {
           </div>
           <button>⬇ Backward</button>
           <div className="action-buttons">
-            <button className="stop">⏹ Stop</button>
+            <button className="stop">Stop</button>
             <button className="start">Start</button>
           </div>
         </div>

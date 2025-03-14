@@ -1,28 +1,50 @@
 .dashboard-container {
-    padding: 15px;
-    background-color: #f6f6f6;
-    border-radius: 5px;
-    min-height: 90vh;
-  }
-  
-  .dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .logout-btn {
-    background-color: rgb(167, 0, 0);
-    color: white;
-    border-radius: 5px;
-    border: none;
-    padding: 8px 15px;
-    cursor: pointer;
-  }
-  
-  .dashboard-content {
-    display: grid;
-    gap: 20px;
-  }
-  
+  padding: 15px;
+  background-color: #f6f6f6;
+  border-radius: 5px;
+  min-height: 90vh;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.header-controls button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.header-controls button.active {
+  background-color: #001e3d;
+  color: white;
+}
+
+
+.logout-btn {
+  background-color: rgb(139, 0, 0);
+  color: white;
+  border-radius: 5px;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background-color: rgb(139, 0, 0);
+}
+
+.dashboard-content {
+  display: grid;
+  gap: 20px;
+}
