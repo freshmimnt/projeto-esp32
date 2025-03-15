@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 90vh;
+    height: 98vh;
     background-color: #e7e7e7;
     border-radius: 5px;
   }
@@ -37,5 +37,10 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin-bottom: 10px;
   }
   
+  .register-link{
+    cursor: "pointer";
+    color: "#007bff" 
+  }

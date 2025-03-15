@@ -73,3 +73,27 @@
   font-size: 16px;
   font-style: italic;
 }
+
+.mode-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.mode-buttons button {
+  width: 35%;
+  padding: 10px 20px;
+  border: 0.5px solid black;
+  border-radius: 5px;
+  background-color: white;
+  color: black;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.mode-buttons button.active {
+  background-color: #e9e9ed;
+  color: white;
+}
