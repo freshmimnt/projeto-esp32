@@ -9,7 +9,7 @@ const port = 3000
 
 app.use(express.json())
 
-dotenv.config();
+require('dotenv').config();
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -19,17 +19,33 @@ const pool = new Pool({
   port: 5432,
 });
 
-const client = mqtt.connect('mqtt://broker.hivemq.com', { 
+const client = mqtt.connect('mqtts://6ea8d26dbacc48a28de3a4d62b39e9fb.s1.eu.hivemq.cloud:8883', { 
   username: process.env.MQTT_USERNAME,
   password: process.env.MQTT_PASSWORD
 });
 
-client.on('connect', async () => {
-  console.log('Connected to MQTT broker');
+client.on('connect', () => {
+  console.log('Connected to HiveMQ Cloud');
+});
+
+client.on('error', (err) => {
+  console.error('MQTT Connection Error:', err.message);
+});
+
+client.on('close', () => {
+  console.warn('MQTT Connection Closed');
+});
+
+client.subscribe('esp32/ultrasonic_sensor', (err) => {
+  if (err) {
+    console.error('Subscription error:', err.message);
+  } else {
+    console.log('Subscribed to topic: esp32/ultrasonic_sensor');
+  }
 });
 
 client.on('message', (topic, message) => {
-  console.log(`Received message on topic: `, topic, 'message: ', message);
+  console.log(`Received message from topic '${topic}': ${message.toString()}`);
 });
 
 /*app.post('/login', async (req, res) => {
