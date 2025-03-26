@@ -1,16 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [socket, setSocket] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const ws = new WebSocket("ws://localhost:8080"); // need to replace this url with websocket url
+    setSocket(ws);
+
+    ws.onopen = () => console.log("Connected to WebSocket server");
+    ws.onmessage = (message) => {
+      const response = JSON.parse(message.data);
+      if (response.status === "success") {
+        navigate("/dashboard");
+      } else {
+        alert(response.message || "Login failed");
+      }
+    };
+
+    ws.onerror = (error) => console.error("WebSocket error:", error);
+    ws.onclose = () => console.log("WebSocket connection closed");
+
+    return () => ws.close();
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
     if (email && password) {
-      navigate("/dashboard");
+      socket.send(JSON.stringify({ action: "login", email, password }));
     } else {
       alert("Please enter email and password.");
     }
