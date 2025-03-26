@@ -1,4 +1,9 @@
 import "../styles/controlPanel.css";
+import React, { useState, useEffect } from 'react';
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3000');
+
 
 const ControlPanel = () => {
   return (
@@ -6,14 +11,14 @@ const ControlPanel = () => {
       <div className="control-container">
         <h2>Control Panel</h2>
         <div className="control-buttons">
-          <button>⬆ Forward</button>
+          <button value={"esp32/FORWARD"}>⬆ Forward</button>
           <div className="horizontal-buttons">
-            <button>⬅ Left</button>
-            <button>➡ Right</button>
+            <button value={"esp32/LEFT"}>⬅ Left</button>
+            <button value={"esp32/RIGHT"}>➡ Right</button>
           </div>
-          <button>⬇ Backward</button>
+          <button value={"esp32/BACKWARD"}>⬇ Backward</button>
           <div className="action-buttons">
-            <button className="stop">⏹ Stop</button>
+            <button className="stop" value={"esp32/STOP"}>⏹ Stop</button>
             <button className="start">Start</button>
           </div>
         </div>

@@ -1,25 +1,33 @@
 const express = require('express')
 const mqtt = require('mqtt')
-const jwt  = require('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 const Pool = require('pg').Pool
 const dotenv = require('dotenv')
-const app = express()
-const port = 3000
+const { createServer } = require("http");
+const { Server } = require('socket.io');
+
+const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: { origin: "*" }
+});
 
 app.use(express.json())
 
 require('dotenv').config();
 
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host:process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password:process.env.DB_PASSWORD,
-  port: 5432,
-});
+let ultrasonicValue = 0;
 
-const client = mqtt.connect('mqtts://6ea8d26dbacc48a28de3a4d62b39e9fb.s1.eu.hivemq.cloud:8883', { 
+/*const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: 5432,
+});*/
+
+const client = mqtt.connect('mqtts://6ea8d26dbacc48a28de3a4d62b39e9fb.s1.eu.hivemq.cloud:8883', {
   username: process.env.MQTT_USERNAME,
   password: process.env.MQTT_PASSWORD
 });
@@ -45,25 +53,25 @@ client.subscribe('esp32/ultrasonic_sensor', (err) => {
 });
 
 client.on('message', (topic, message) => {
+  ultrasonicValue = parseFloat(message.toString());
   console.log(`Received message from topic '${topic}': ${message.toString()}`);
+  io.emit('ultrasonicData', {distance: ultrasonicValue});
 });
 
-/*app.post('/login', async (req, res) => {
-  try{
-    const {email, password} = req.body;
+/*
+client.publish('esp32/command', )
 
-    const [userResult] = await pool.query({
-      text: 'SELECT * FROM users WHERE email = $1',
-      values: [email]
-    });
 
-  }*/
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+*/
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+io.on('connection', (socket) => {
+  console.log('connected')
 
+  socket.on('message', (message) => {
+    console.log(message);
+    io.emit('message', `${socket.id.substr(0, 2)} said ${message}`)
+  });
+});
+
+httpServer.listen(3000, () => console.log(`Example app listening on http://localhost:3000`));

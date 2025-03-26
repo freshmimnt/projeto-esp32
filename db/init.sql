@@ -1,4 +1,4 @@
-CREATE TYPE STATUS AS ENUM ('idle', 'moving', 'completed', 'failed', '');
+CREATE TYPE STATUS AS ENUM ('idle', 'moving', 'completed', 'failed', 'ongoing', 'to_start');
 CREATE TYPE TYPE AS ENUM ('walls', 'ramp', 'irregular_suface');
 
 CREATE TABLE users (
