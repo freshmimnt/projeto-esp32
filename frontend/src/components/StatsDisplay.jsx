@@ -1,6 +1,23 @@
 import "../styles/statsDisplay.css";
+import React, { useState, useEffect } from 'react';
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3000');
 
 const StatsDisplay = () => {
+
+  const [distance, setDistance] = useState(null);
+
+  useEffect(() => {
+    socket.on('ultrasonicData', (data) => {
+      setDistance(data.distance);
+    });
+
+    return () => {
+      socket.off('ultrasonicData');
+    };
+  }, []);
+
   return (
     <div className="stats-grid">
       <div className="stats-box">
@@ -21,7 +38,7 @@ const StatsDisplay = () => {
       </div>
       <div className="stats-box">
         <h2>Distance to Obstacle:</h2>
-        <span>30 cm</span>
+        <span>Distance: {distance} cm</span>
       </div>
       <div className="stats-box">
         <h2>Time Taken:</h2>
