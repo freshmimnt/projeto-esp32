@@ -1,9 +1,6 @@
-import { useState } from "react";
-import "../styles/controlPanel.css";
 import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
-
-const socket = io('http://localhost:3000');
+import "../styles/controlPanel.css";
+import socket from '../socket';
 
 const ControlPanel = () => {
   const [mode, setMode] = useState("Manual");

@@ -6,15 +6,40 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
+    setError("");
+
     if (name && email && password) {
-      console.log("Registered:", { name, email, password });
-      navigate("/"); // Redirect to login page after registration
+      try {
+        const response = await fetch('http://localhost:3000/api/users/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, email, password }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Registration failed');
+        }
+
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        console.log("Registered successfully:", data);
+        navigate("/dashboard"); // Redirect to dashboard after successful registration - works
+      } catch (err) {
+        setError(err.message);
+        console.error("Registration error:", err);
+      }
     } else {
-      alert("Please fill in all fields.");
+      setError("Please fill in all fields.");
     }
   };
 
@@ -22,6 +47,7 @@ const Register = () => {
     <div className="login-container">
       <div className="login-box">
         <h2>Register</h2>
+        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleRegister}>
           <input
             type="text"
