@@ -21,7 +21,7 @@ const StatsDisplay = () => {
   return (
     <div className="stats-grid">
       <div className="stats-box">
-        <h2>Reaction Time:</h2>
+        <h2>Distance Travelled:</h2>
         <span>0.5s</span>
       </div>
       <div className="stats-box">

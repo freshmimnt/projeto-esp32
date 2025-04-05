@@ -34,15 +34,14 @@ const ControlPanel = () => {
         </div>
 
         <div className="control-buttons">
-          <button value={"esp32/FORWARD"}>⬆ Forward</button>
+          <button onClick={"esp32/FORWARD"}>⬆ Forward</button>
           <div className="horizontal-buttons">
-            <button value={"esp32/LEFT"}>⬅ Left</button>
-            <button value={"esp32/RIGHT"}>➡ Right</button>
+            <button onClick={"esp32/LEFT"}>⬅ Left</button>
+            <button onClick={"esp32/RIGHT"}>➡ Right</button>
           </div>
-          <button value={"esp32/BACKWARD"}>⬇ Backward</button>
+          <button onClick={"esp32/BACKWARD"}>⬇ Backward</button>
           <div className="action-buttons">
-            <button className="stop" value={"esp32/STOP"}>⏹ Stop</button>
-            <button className="start">Start</button>
+            <button className="stop" onClick={"esp32/STOP"}>⏹ Stop</button>
           </div>
         </div>
       </div>

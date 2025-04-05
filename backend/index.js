@@ -2,11 +2,10 @@ const express = require('express')
 const mqtt = require('mqtt')
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
-const Pool = require('pg').Pool
+const pool = require('./db');
 const dotenv = require('dotenv')
 const { createServer } = require("http");
 const { Server } = require('socket.io');
-
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -17,15 +16,9 @@ app.use(express.json())
 
 require('dotenv').config();
 
-let ultrasonicValue = 0;
+const port = 3000;
 
-/*const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: 5432,
-});*/
+let ultrasonicValue = 0;
 
 const client = mqtt.connect('mqtts://6ea8d26dbacc48a28de3a4d62b39e9fb.s1.eu.hivemq.cloud:8883', {
   username: process.env.MQTT_USERNAME,
@@ -59,19 +52,17 @@ client.on('message', (topic, message) => {
 });
 
 /*
-client.publish('esp32/command', )
-
-
-
+client.publish('esp32/receive', 'Hello, HiveMQ!', { retain: true }, (err) => {
+  if (err) {
+    console.error('Failed to publish message:', err);
+  } else {
+    console.log('Message published with retain flag set to true');
+  }
+});
 */
 
-io.on('connection', (socket) => {
-  console.log('connected')
+//you can put the login, register and logout endpoint below this comment
 
-  socket.on('message', (message) => {
-    console.log(message);
-    io.emit('message', `${socket.id.substr(0, 2)} said ${message}`)
-  });
-});
+httpServer.listen(port, () => console.log(`Example app listening on http://localhost:3000`));
 
-httpServer.listen(3000, () => console.log(`Example app listening on http://localhost:3000`));
+

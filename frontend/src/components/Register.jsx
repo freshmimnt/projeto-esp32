@@ -10,8 +10,7 @@ const Register = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8080"); // need to replace this url with websocket url
-    setSocket(ws);
+    const ws = new WebSocket("ws://localhost:8080"); 
 
     ws.onopen = () => console.log("Connected to WebSocket server");
     ws.onmessage = (message) => {
