@@ -1,3 +1,7 @@
+// stores the token in localStorage 
+//TODO:
+// cookie, jw to store in browser 
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";

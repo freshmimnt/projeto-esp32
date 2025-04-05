@@ -1,3 +1,7 @@
+/*require('dotenv').config();
+const jwt = require('jsonwebtoken')
+const cookieParser = require('cookie-parser')*/
+
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
