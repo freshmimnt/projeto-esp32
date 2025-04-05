@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 
@@ -6,9 +6,9 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [socket, setSocket] = useState(null);
   const navigate = useNavigate();
 
+<<<<<<< HEAD
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:8080"); 
 
@@ -29,10 +29,13 @@ const Register = () => {
     return () => ws.close();
   }, []);
 
+=======
+>>>>>>> 26e2b435a8d717d9d277402ced020dc5ec3cd0f9
   const handleRegister = (e) => {
     e.preventDefault();
     if (name && email && password) {
-      socket.send(JSON.stringify({ action: "register", name, email, password }));
+      console.log("Registered:", { name, email, password });
+      navigate("/"); // Redirect to login page after registration
     } else {
       alert("Please fill in all fields.");
     }
@@ -43,7 +46,7 @@ const Register = () => {
       <div className="login-box">
         <h2>Register</h2>
         <form onSubmit={handleRegister}>
-          <input 
+          <input
             type="text"
             placeholder="Name"
             value={name}
