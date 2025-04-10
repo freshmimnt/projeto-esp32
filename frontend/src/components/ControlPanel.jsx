@@ -1,3 +1,4 @@
+import "../styles/controlPanel.css";
 import React, { useState, useEffect } from 'react';
 import "../styles/controlPanel.css";
 import socket from '../socket';
@@ -31,22 +32,26 @@ const ControlPanel = () => {
         </div>
 
         <div className="control-buttons">
-          <button value={"esp32/FORWARD"}>⬆ Forward</button>
+          <button onClick={() => socket.emit('command', 'FORWARD')}>⬆ Forward</button>
           <div className="horizontal-buttons">
-            <button value={"esp32/LEFT"}>⬅ Left</button>
-            <button value={"esp32/RIGHT"}>➡ Right</button>
+            <button onClick={() => socket.emit('command','LEFT')}>⬅ Left</button>
+            <button onClick={() => socket.emit('command','RIGHT')}> Right</button>
           </div>
-          <button value={"esp32/BACKWARD"}>⬇ Backward</button>
+          <button onClick={() => socket.emit('command','BACKWARD')}>⬇ Backward</button>
           <div className="action-buttons">
-            <button className="stop" value={"esp32/STOP"}>⏹ Stop</button>
-            <button className="start">Start</button>
+            <button className="stop" onClick={() => socket.emit('command','STOP')}>⏹ Stop</button>
+            <button className="start" onClick={() => socket.emit('command','START')}> Start</button>
           </div>
         </div>
       </div>
 
       <div className="route-container">
         <h2>Vehicle Route</h2>
-        <div className="route-placeholder">---Map/Route---</div>
+        <div className="route-placeholder">
+          <svg width="400" height="120">
+            <rect x="10" y="10" width="200" height="100" stroke="red" stroke-width="6" fill="blue" />
+          </svg>
+        </div>
       </div>
     </div>
   );
