@@ -49,5 +49,4 @@ Back-end - O backend que será desenvolvido em NodeJS será responsavel por:
 Receber os dados enviados pelo ESP32 através de MQTT;
 
 Processar e guardar esses dados na base de dados;
-
-Web Server – Teremos um web server em Java que vai agir como um reverse proxy, parecido com o nginx, que terá analise léxica para filtrar.
+ 
