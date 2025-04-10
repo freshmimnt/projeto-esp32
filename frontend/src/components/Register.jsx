@@ -10,12 +10,12 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
     setError("");
 
     if (name && email && password) {
       try {
-        const response = await fetch('http://localhost:4000/api/users/register', {
+        const response = await fetch('http://localhost:3000/api/users/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

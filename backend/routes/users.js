@@ -8,13 +8,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Pool = require('pg').Pool;
 
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: 5432,
-});
+
+const cookieParser = require('cookie-parser')
+const Pool = require('pg').Pool
+const dotenv = require('dotenv')
+
 
 // Register endpoint
 router.post('/register', async (req, res) => {
