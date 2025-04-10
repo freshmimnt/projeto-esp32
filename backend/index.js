@@ -37,6 +37,7 @@ client.on('close', () => {
   console.warn('MQTT Connection Closed');
 });
 
+// MQTT subscribe to receive the ultrasonic
 client.subscribe('esp32/ultrasonic_sensor', (err) => {
   if (err) {
     console.error('Subscription error:', err.message);
@@ -45,23 +46,40 @@ client.subscribe('esp32/ultrasonic_sensor', (err) => {
   }
 });
 
+// MQTT
+
 client.on('message', (topic, message) => {
   ultrasonicValue = parseFloat(message.toString());
   console.log(`Received message from topic '${topic}': ${message.toString()}`);
   io.emit('ultrasonicData', {distance: ultrasonicValue});
+  //pool.query('INSERT INTO sensors(distance, timestamp) VALUES($1, NOW())', [ultrasonicValue], (err) => {
+  //  if (err) console.error('DB insert error:', err);
+ // });
 });
 
-/*
-client.publish('esp32/receive', 'Hello, HiveMQ!', { retain: true }, (err) => {
-  if (err) {
-    console.error('Failed to publish message:', err);
-  } else {
-    console.log('Message published with retain flag set to true');
-  }
+app.get('/api/ultrasonic', (req, res) => {
+  res.json({ distance: ultrasonicValue });
 });
-*/
+
+// MQTT publish to send the command to the vehcle
+io.on('connection', (socket) =>{
+  socket.on('command', (cmd) =>{
+    client.publish('esp32/receive', (cmd), { retain: true }, (err) => {
+      console.log(`Received command from frontend: ${cmd}`);
+      if (err) {
+        console.error('Failed to publish message:', err);
+      } else {
+        console.log('Command published');
+      }
+    });
+  });
+});
 
 //you can put the login, register and logout endpoint below this comment
+
+/*get
+  difference between the start time and end time
+*/
 
 httpServer.listen(port, () => console.log(`Example app listening on http://localhost:3000`));
 

@@ -11,7 +11,7 @@ CREATE TABLE vehicles(
     self_driving BOOLEAN NOT NULL
 );
 
-CREATE TABLE informations(
+CREATE TABLE sensors(
     id SERIAL PRIMARY KEY,
     id_vehicle INT REFERENCES vehicles(id) ON DELETE CASCADE,
     speed FLOAT NOT NULL,
