@@ -23,6 +23,7 @@ const Login = () => {
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify({ email, password }),
         });
 
@@ -31,10 +32,6 @@ const Login = () => {
         if (!response.ok) {
           throw new Error(data.message || 'Login failed');
         }
-
-        // stores the token in localStorage 
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
 
         console.log("Logged in successfully:", data);
         navigate("/dashboard");

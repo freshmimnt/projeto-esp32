@@ -7,12 +7,29 @@ import "../styles/dashboard.css";
 const Dashboard = () => {
   const navigate = useNavigate();
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/users/logout', {
+        method: 'POST',
+        credentials: 'include', // allows cookies to be sent/received from the users browser
+      });
+
+      if (response.ok) {
+        navigate("/");
+      } else {
+        console.error('Logout failed');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
         <h2>Dashboard</h2>
         <div className="header-controls">
-          <button onClick={() => navigate("/")} className="logout-btn">
+          <button onClick={handleLogout} className="logout-btn">
             Logout
           </button>
         </div>

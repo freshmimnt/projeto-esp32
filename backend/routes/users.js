@@ -46,10 +46,17 @@ router.post('/register', async (req, res) => {
       { expiresIn: '24h' }
     );
 
+    // Set HTTP-only cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
     res.status(201).json({
       message: 'User registered successfully',
-      user: result.rows[0],
-      token
+      user: result.rows[0]
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -87,14 +94,21 @@ router.post('/login', async (req, res) => {
       { expiresIn: '24h' }
     );
 
+    // Set HTTP-only cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
     res.json({
       message: 'Login successful',
       user: {
         id: user.id,
         name: user.name,
         email: user.email
-      },
-      token
+      }
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -102,10 +116,16 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Logout endpoint
+router.post('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.json({ message: 'Logged out successfully' });
+});
+
 // Get user profile endpoint
 router.get('/profile', async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.cookies.token;
     if (!token) {
       return res.status(401).json({ message: 'No token provided' });
     }

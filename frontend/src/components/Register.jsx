@@ -9,38 +9,10 @@ const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-<<<<<<< HEAD
   const handleRegister = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
     setError("");
 
-=======
-<<<<<<< HEAD
-  useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8080"); 
-
-    ws.onopen = () => console.log("Connected to WebSocket server");
-    ws.onmessage = (message) => {
-      const response = JSON.parse(message.data);
-      if (response.status === "success") {
-        alert("Registration successful!");
-        navigate("/");
-      } else {
-        alert(response.message || "Registration failed");
-      }
-    };
-
-    ws.onerror = (error) => console.error("WebSocket error:", error);
-    ws.onclose = () => console.log("WebSocket connection closed");
-
-    return () => ws.close();
-  }, []);
-
-=======
->>>>>>> 26e2b435a8d717d9d277402ced020dc5ec3cd0f9
-  const handleRegister = (e) => {
-    e.preventDefault();
->>>>>>> origin/main
     if (name && email && password) {
       try {
         const response = await fetch('http://localhost:3000/api/users/register', {
@@ -48,6 +20,7 @@ const Register = () => {
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify({ name, email, password }),
         });
 
@@ -57,11 +30,8 @@ const Register = () => {
           throw new Error(data.message || 'Registration failed');
         }
 
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-
         console.log("Registered successfully:", data);
-        navigate("/dashboard"); // Redirect to dashboard after successful registration - works
+        navigate("/dashboard");
       } catch (err) {
         setError(err.message);
         console.error("Registration error:", err);
