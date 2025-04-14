@@ -6,20 +6,18 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const Pool = require('pg').Pool;
+const pool = require('../db');
+const cookieParser = require('cookie-parser');
+const dotenv = require('dotenv');
 
-
-const cookieParser = require('cookie-parser')
-const Pool = require('pg').Pool
-const dotenv = require('dotenv')
-
-
-// Register endpoint
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Check if user already exists
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
     const userExists = await pool.query(
       'SELECT * FROM users WHERE email = $1',
       [email]
@@ -29,29 +27,25 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Insert new user
     const result = await pool.query(
       'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email',
       [name, email, hashedPassword]
     );
 
-    // Create JWT token
     const token = jwt.sign(
       { userId: result.rows[0].id },
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '24h' }
     );
 
-    // Set HTTP-only cookie
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      maxAge: 24 * 60 * 60 * 1000 
     });
 
     res.status(201).json({
@@ -64,12 +58,14 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Login endpoint
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user exists
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
     const result = await pool.query(
       'SELECT * FROM users WHERE email = $1',
       [email]
@@ -81,25 +77,22 @@ router.post('/login', async (req, res) => {
 
     const user = result.rows[0];
 
-    // Verify password
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Create JWT token
     const token = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '24h' }
     );
 
-    // Set HTTP-only cookie
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      maxAge: 24 * 60 * 60 * 1000 
     });
 
     res.json({
@@ -116,13 +109,11 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Logout endpoint
 router.post('/logout', (req, res) => {
   res.clearCookie('token');
   res.json({ message: 'Logged out successfully' });
 });
 
-// Get user profile endpoint
 router.get('/profile', async (req, res) => {
   try {
     const token = req.cookies.token;
