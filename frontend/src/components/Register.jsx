@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 
@@ -9,16 +9,38 @@ const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const ws = new WebSocket("ws://localhost:8080");
+
+    ws.onopen = () => console.log("Connected to WebSocket server");
+    ws.onmessage = (message) => {
+      const response = JSON.parse(message.data);
+      if (response.status === "success") {
+        alert("Registration successful!");
+        navigate("/");
+      } else {
+        alert(response.message || "Registration failed");
+      }
+    };
+
+    ws.onerror = (error) => console.error("WebSocket error:", error);
+    ws.onclose = () => console.log("WebSocket connection closed");
+
+    return () => ws.close();
+  }, [navigate]);
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
 
+    console.log("Form submission:", { name, email, password }); // Log for debugging
+
     if (name && email && password) {
       try {
-        const response = await fetch('http://localhost:3000/api/users/register', {
-          method: 'POST',
+        const response = await fetch("http://localhost:3000/api/users/register", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           credentials: 'include',
           body: JSON.stringify({ name, email, password }),
@@ -27,8 +49,11 @@ const Register = () => {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || 'Registration failed');
+          throw new Error(data.message || "Registration failed");
         }
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
 
         console.log("Registered successfully:", data);
         navigate("/dashboard");

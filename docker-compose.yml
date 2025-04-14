@@ -44,7 +44,7 @@ services:
       - /app/node_modules
     ports:
       - "5173:5173"
-
+      
 volumes:
   db:
     driver: local
