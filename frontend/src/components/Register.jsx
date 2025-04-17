@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 
@@ -6,35 +6,38 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [socket, setSocket] = useState(null);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8080"); 
-
-    ws.onopen = () => console.log("Connected to WebSocket server");
-    ws.onmessage = (message) => {
-      const response = JSON.parse(message.data);
-      if (response.status === "success") {
-        alert("Registration successful!");
-        navigate("/");
-      } else {
-        alert(response.message || "Registration failed");
-      }
-    };
-
-    ws.onerror = (error) => console.error("WebSocket error:", error);
-    ws.onclose = () => console.log("WebSocket connection closed");
-
-    return () => ws.close();
-  }, []);
-
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
+    setError("");
+
     if (name && email && password) {
-      socket.send(JSON.stringify({ action: "register", name, email, password }));
+      try {
+        const response = await fetch("http://localhost:3000/api/users/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: 'include',
+          body: JSON.stringify({ name, email, password }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Registration failed");
+        }
+
+        console.log("Registered successfully:", data);
+        navigate("/dashboard");
+      } catch (err) {
+        setError(err.message);
+        console.error("Registration error:", err);
+      }
     } else {
-      alert("Please fill in all fields.");
+      setError("Please fill in all fields.");
     }
   };
 
@@ -42,8 +45,9 @@ const Register = () => {
     <div className="login-container">
       <div className="login-box">
         <h2>Register</h2>
+        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleRegister}>
-          <input 
+          <input
             type="text"
             placeholder="Name"
             value={name}

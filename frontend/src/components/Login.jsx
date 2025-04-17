@@ -1,39 +1,46 @@
-import { useState, useEffect } from "react";
+// stores the token in localStorage 
+//TODO:
+// cookie, jw to store in browser 
+
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [socket, setSocket] = useState(null);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8080"); // need to replace this url with websocket url
-    setSocket(ws);
-
-    ws.onopen = () => console.log("Connected to WebSocket server");
-    ws.onmessage = (message) => {
-      const response = JSON.parse(message.data);
-      if (response.status === "success") {
-        navigate("/dashboard");
-      } else {
-        alert(response.message || "Login failed");
-      }
-    };
-
-    ws.onerror = (error) => console.error("WebSocket error:", error);
-    ws.onclose = () => console.log("WebSocket connection closed");
-
-    return () => ws.close();
-  }, []);
-
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
+
     if (email && password) {
-      socket.send(JSON.stringify({ action: "login", email, password }));
+      try {
+        const response = await fetch('http://localhost:3000/api/users/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Login failed');
+        }
+
+        console.log("Logged in successfully:", data);
+        navigate("/dashboard");
+      } catch (err) {
+        setError(err.message);
+        console.error("Login error:", err);
+      }
     } else {
-      alert("Please enter email and password.");
+      setError("Please enter email and password.");
     }
   };
 
@@ -41,6 +48,7 @@ const Login = () => {
     <div className="login-container">
       <div className="login-box">
         <h2>Login</h2>
+        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleLogin}>
           <input
             type="email"

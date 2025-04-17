@@ -6,13 +6,24 @@ const pool = require('./db');
 const dotenv = require('dotenv')
 const { createServer } = require("http");
 const { Server } = require('socket.io');
+const cors = require('cors');
+
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  cors: { origin: "*" }
+  cors: { origin: "*" },
+  transports: ['polling', 'websocket'],
+  allowUpgrades: false
 });
 
+// configure CORS with credentials
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+
 app.use(express.json())
+app.use(cookieParser())
 
 require('dotenv').config();
 

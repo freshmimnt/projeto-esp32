@@ -1,8 +1,7 @@
 import "../styles/controlPanel.css";
 import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
-
-const socket = io('http://localhost:3000');
+import "../styles/controlPanel.css";
+import socket from '../socket';
 
 const ControlPanel = () => {
   const [mode, setMode] = useState("Manual");
@@ -44,7 +43,18 @@ const ControlPanel = () => {
             <button className="start" onClick={() => socket.emit('command','START')}> Start</button>
           </div>
         </div>
+
+        <div className="speed-buttons">
+          <h3>Select Speed</h3>
+          <div className="speed-options">
+            <button onClick={() => socket.emit('speed', 'SLOW')}>Slow</button>
+            <button onClick={() => socket.emit('speed', 'NORMAL')}>Normal</button>
+           <button onClick={() => socket.emit('speed', 'TURBO')}>Turbo</button>
+          </div>
+        </div>
       </div>
+
+
 
       <div className="route-container">
         <h2>Vehicle Route</h2>
