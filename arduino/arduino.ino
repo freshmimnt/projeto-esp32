@@ -11,8 +11,8 @@ const char *password = "passw0rd";
 // MQTT broker details
 const char *mqtt_broker = "6ea8d26dbacc48a28de3a4d62b39e9fb.s1.eu.hivemq.cloud";
 const int mqtt_port = 8883;
-const char *mqtt_username = "mintfresh";
-const char *mqtt_password = "M#DJj5@CjJSzvWY";
+const char *mqtt_username = "";
+const char *mqtt_password = "";
 
 // MQTT topic for Ultrasonic sensor
 const char *topic_publish_ultrasonic = "esp32/ultrasonic_sensor";

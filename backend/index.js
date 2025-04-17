@@ -19,6 +19,7 @@ require('dotenv').config();
 const port = 3000;
 
 let ultrasonicValue = 0;
+let speed = 0;
 
 const client = mqtt.connect('mqtts://6ea8d26dbacc48a28de3a4d62b39e9fb.s1.eu.hivemq.cloud:8883', {
   username: process.env.MQTT_USERNAME,
@@ -37,7 +38,7 @@ client.on('close', () => {
   console.warn('MQTT Connection Closed');
 });
 
-// MQTT subscribe to receive the ultrasonic
+// MQTT subscribe to receive the ultrasonic value
 client.subscribe('esp32/ultrasonic_sensor', (err) => {
   if (err) {
     console.error('Subscription error:', err.message);
@@ -46,7 +47,16 @@ client.subscribe('esp32/ultrasonic_sensor', (err) => {
   }
 });
 
-// MQTT
+// MQTT subscribe to receive the speed value
+/*
+  client.subscribe('esp32/accelerometer_sensor', (err) =>{
+  if (err){
+    console.error('Subscription error', err.message);  
+  }  else{
+    console.log('Subscribed to topic: esp32/accelerometer_sensor') ; 
+  }
+});
+*/
 
 client.on('message', (topic, message) => {
   ultrasonicValue = parseFloat(message.toString());
