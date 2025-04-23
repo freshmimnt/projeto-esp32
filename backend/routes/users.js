@@ -6,18 +6,19 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const Pool = require('pg').Pool;
-
-
-const cookieParser = require('cookie-parser')
-const Pool = require('pg').Pool
-const dotenv = require('dotenv')
-
+const pool = require('../db');
+const cookieParser = require('cookie-parser');
+const dotenv = require('dotenv');
 
 // Register endpoint
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
+    // Validate input
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
 
     // Check if user already exists
     const userExists = await pool.query(
@@ -68,6 +69,11 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
 
     // Check if user exists
     const result = await pool.query(
