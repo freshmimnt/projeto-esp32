@@ -7,21 +7,11 @@ import "../styles/dashboard.css";
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/users/logout', {
-        method: 'POST',
-        credentials: 'include', // allows cookies to be sent/received from the users browser
-      });
-
-      if (response.ok) {
-        navigate("/");
-      } else {
-        console.error('Logout failed');
-      }
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
+  const handleLogout = () => {
+    // Clear localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate("/");
   };
 
   return (
