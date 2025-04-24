@@ -119,7 +119,7 @@ const Login = () => {
           throw new Error(data.message || 'Login failed');
         }
 
-        // Store token and user data in localStorage
+        // Store token and user data in localStorage - not cookies
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
 

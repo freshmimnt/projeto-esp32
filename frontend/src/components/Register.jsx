@@ -29,7 +29,7 @@ const Register = () => {
           throw new Error(data.message || "Registration failed");
         }
 
-        // Store token and user data in localStorage
+        // Store token and user data in localStorage - not cookies
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
 
