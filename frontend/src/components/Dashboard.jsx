@@ -11,7 +11,7 @@ const Dashboard = () => {
     try {
       const response = await fetch('http://localhost:3000/api/users/logout', {
         method: 'POST',
-        credentials: 'include', // allows cookies to be sent/received from the users browser
+        credentials: 'include', 
       });
 
       if (response.ok) {

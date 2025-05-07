@@ -7,10 +7,10 @@ class Motor
 {
 public:
     Motor(int pin1, int pin2);
-    void motorMoving();
-    void motorStop();
-    void motorLeft();
-    void motorRight();
+    void motorMoving(int speed);
+    void motorStop(int speed);
+    void motorLeft(int speed);
+    void motorRight(int speed);
 
 private:
     int _pin1;

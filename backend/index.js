@@ -1,12 +1,11 @@
 const express = require('express')
 const mqtt = require('mqtt')
-const jwt = require('jsonwebtoken')
-const cookieParser = require('cookie-parser')
 const pool = require('./db');
 const dotenv = require('dotenv')
 const { createServer } = require("http");
 const { Server } = require('socket.io');
 const cors = require('cors');
+const userRoutes = require('./routes/users.js');
 
 const app = express();
 const httpServer = createServer(app);
@@ -16,14 +15,13 @@ const io = new Server(httpServer, {
   allowUpgrades: false
 });
 
-// configure CORS with credentials
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true
 }));
 
 app.use(express.json())
-app.use(cookieParser())
+app.use(express.urlencoded({ extended: true }));
 
 require('dotenv').config();
 
@@ -73,19 +71,16 @@ client.on('message', (topic, message) => {
   ultrasonicValue = parseFloat(message.toString());
   console.log(`Received message from topic '${topic}': ${message.toString()}`);
   io.emit('ultrasonicData', {distance: ultrasonicValue});
-  //pool.query('INSERT INTO sensors(distance, timestamp) VALUES($1, NOW())', [ultrasonicValue], (err) => {
-  //  if (err) console.error('DB insert error:', err);
- // });
 });
 
 app.get('/api/ultrasonic', (req, res) => {
   res.json({ distance: ultrasonicValue });
 });
 
-// MQTT publish to send the command to the vehcle
-io.on('connection', (socket) =>{
-  socket.on('command', (cmd) =>{
-    client.publish('esp32/receive', (cmd), { retain: true }, (err) => {
+// MQTT publish to send the direction, speed and switch between manual and autonomous mode
+io.on('connection', (socket) => {
+  socket.on('command', (cmd) => {
+    client.publish('esp32/vehicle/direction', cmd, { retain: true }, (err) => {
       console.log(`Received command from frontend: ${cmd}`);
       if (err) {
         console.error('Failed to publish message:', err);
@@ -94,13 +89,38 @@ io.on('connection', (socket) =>{
       }
     });
   });
+
+  socket.on('speed', (speed) => {
+    client.publish('esp32/vehicle/speed', speed, { retain: true }, (err) => {
+      console.log(`Received speed from frontend: ${speed}`);
+      if (err) {
+        console.error('Failed to publish message:', err);
+      } else {
+        console.log('Speed published');
+      }
+    });
+
+    socket.on('mode', (mode) => {
+      client.publish('esp32/vehicle/mode', mode, { retain: true }, (err) => {
+        console.log(`Received mode from frontend: ${mode}`);
+        if (err) {
+          console.error('Failed to publish message:', err);
+        } else {
+          console.log('Mode published');
+        }
+      });
+    });
+  });
 });
 
 //you can put the login, register and logout endpoint below this comment
+app.use('/api/users', userRoutes);
 
 /*get
   difference between the start time and end time
 */
+
+//NC35HJ49NE sock
 
 httpServer.listen(port, () => console.log(`Example app listening on http://localhost:3000`));
 

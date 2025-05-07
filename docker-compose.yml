@@ -12,6 +12,8 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - my_network
 
   backend:
     build:
@@ -43,8 +45,8 @@ services:
       - ./frontend:/app
       - /app/node_modules
     ports:
-      - "5175:5173"
-      
+      - "5173:5173"
+
 volumes:
   db:
     driver: local
@@ -52,7 +54,3 @@ volumes:
 networks:
   my_network:
     driver: bridge
-
-# primeiro faz docker compose up --build, para fazer o build da bd
-# depois faz docker compose up -d para pôr o container a funcionar e docker compose down para parar de funcionar
-# com isto já não precisas fazer npm run dev para o frontend ou backend, eu transformei os dois em serviços docker

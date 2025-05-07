@@ -1,20 +1,18 @@
-/*require('dotenv').config();
-const jwt = require('jsonwebtoken')
-const cookieParser = require('cookie-parser')*/
-
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const pool = require('../db');
-const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 
 router.post('/register', async (req, res) => {
   try {
+    console.log('Register request received:', req.body);
+    
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
+      console.log('Missing fields:', { name, email, password });
       return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -24,6 +22,7 @@ router.post('/register', async (req, res) => {
     );
 
     if (userExists.rows.length > 0) {
+      console.log('User already exists:', email);
       return res.status(400).json({ message: 'User already exists' });
     }
 
@@ -41,30 +40,25 @@ router.post('/register', async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000 
-    });
+    console.log('Registration successful:', result.rows[0]);
 
     res.status(201).json({
       message: 'User registered successfully',
-      user: result.rows[0]
+      user: result.rows[0],
+      token
     });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ 
+      message: 'Server error',
+      error: error.message 
+    });
   }
 });
 
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
-    }
 
     const result = await pool.query(
       'SELECT * FROM users WHERE email = $1',
@@ -88,20 +82,14 @@ router.post('/login', async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000 
-    });
-
     res.json({
       message: 'Login successful',
       user: {
         id: user.id,
         name: user.name,
         email: user.email
-      }
+      },
+      token
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -109,14 +97,9 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.post('/logout', (req, res) => {
-  res.clearCookie('token');
-  res.json({ message: 'Logged out successfully' });
-});
-
 router.get('/profile', async (req, res) => {
   try {
-    const token = req.cookies.token;
+    const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
       return res.status(401).json({ message: 'No token provided' });
     }
@@ -138,4 +121,4 @@ router.get('/profile', async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;  

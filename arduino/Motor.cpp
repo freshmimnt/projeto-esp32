@@ -9,26 +9,26 @@ Motor::Motor(int pin1, int pin2)
     _pin2 = pin2;
 }
 
-void Motor::motorMoving()
+void Motor::motorMoving(int speed)
 {
-    digitalWrite(_pin1, HIGH);
-    digitalWrite(_pin2, HIGH);
+    analogWrite(_pin1, speed);
+    analogWrite(_pin2, speed);
 }
 
-void Motor::motorStop()
+void Motor::motorRight(int speed)
 {
-    digitalWrite(_pin1, LOW);
-    digitalWrite(_pin2, LOW);
+    analogWrite(_pin1, speed);
+    analogWrite(_pin2, 0);
 }
 
-void Motor::motorRight()
+void Motor::motorLeft(int speed)
 {
-    digitalWrite(_pin1, HIGH);
-    digitalWrite(_pin2, LOW);
+    analogWrite(_pin2, speed);
+    analogWrite(_pin1, 0);
 }
 
-void Motor::motorLeft()
+void Motor::motorStop(int speed)
 {
-    digitalWrite(_pin1, LOW);
-    digitalWrite(_pin2, HIGH);
+    analogWrite(_pin2, speed);
+    analogWrite(_pin2, speed);
 }
