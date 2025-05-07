@@ -20,7 +20,6 @@ const Register = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: 'include',
           body: JSON.stringify({ name, email, password }),
         });
 
@@ -29,6 +28,10 @@ const Register = () => {
         if (!response.ok) {
           throw new Error(data.message || "Registration failed");
         }
+
+        // Store token and user data in localStorage - not cookies
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
 
         console.log("Registered successfully:", data);
         navigate("/dashboard");
