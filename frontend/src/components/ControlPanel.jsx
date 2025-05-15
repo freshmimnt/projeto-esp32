@@ -53,17 +53,6 @@ const ControlPanel = () => {
           </div>
         </div>
       </div>
-
-
-
-      <div className="route-container">
-        <h2>Vehicle Route</h2>
-        <div className="route-placeholder">
-          <svg width="400" height="120">
-            <rect x="10" y="10" width="200" height="100" stroke="red" stroke-width="6" fill="blue" />
-          </svg>
-        </div>
-      </div>
     </div>
   );
 };

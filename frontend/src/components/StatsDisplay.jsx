@@ -38,10 +38,6 @@ const StatsDisplay = () => {
         <h2>Distance to Obstacle:</h2>
         <span>Distance: {distance} cm</span>
       </div>
-      <div className="stats-box">
-        <h2>Time Taken:</h2>
-        <span>1m 20s</span>
-      </div>
     </div>
   );
 };
