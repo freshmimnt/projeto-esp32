@@ -10,7 +10,7 @@
 [a-zA-Z0-9.-]+       { yylval = strdup(yytext); return DOMAIN; }
 "."                  { return DOT; }
 [a-zA-Z]{2,}         { yylval = strdup(yytext); return TLD; }
-[ \t\n]             ; /* Skip whitespace */
+[ \t\n]             ; /* to skip whitespace */
 .                   { return INVALID; }
 %%
 
