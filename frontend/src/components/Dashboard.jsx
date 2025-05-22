@@ -5,17 +5,7 @@ import ControlPanel from "./ControlPanel";
 import "../styles/dashboard.css";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
 
-
-  // Check if user is logged in
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      // If no token (in case of bug idk), redirect to login
-      navigate("/");
-    }
-  }, [navigate]);
 
   const handleLogout = () => {
     // to clear the localStorage
