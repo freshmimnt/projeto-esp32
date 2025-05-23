@@ -19,10 +19,6 @@ const StatsDisplay = () => {
   return (
     <div className="stats-grid">
       <div className="stats-box">
-        <h2>Distance Travelled:</h2>
-        <span>0.5 cm</span>
-      </div>
-      <div className="stats-box">
         <h2>Battery:</h2>
         <span>85%</span>
       </div>
