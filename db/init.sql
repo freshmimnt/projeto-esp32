@@ -5,19 +5,36 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE vehicles(
+CREATE TABLE vehicles (
     id SERIAL PRIMARY KEY,
-    id_user INT REFERENCES users(id) ON DELETE CASCADE,
-    self_driving BOOLEAN NOT NULL
+    id_user INT REFERENCES users (id) ON DELETE CASCADE,
+    is_active TEXT NOT NULL,
+    self_driving TEXT NOT NULL
 );
 
-CREATE TABLE sensors(
+CREATE TABLE sensors (
     id SERIAL PRIMARY KEY,
-    id_vehicle INT REFERENCES vehicles(id) ON DELETE CASCADE,
-    speed FLOAT NOT NULL,
-    battery FLOAT NOT NULL,
-    distance_travelled FLOAT NOT NULL,
-    distance_to_obstacle FLOAT NOT NULL,
-    start_time TIMESTAMP NOT NULL,
-    end_time TIMESTAMP NOT NULL
+    id_vehicle INT REFERENCES vehicles (id) ON DELETE CASCADE,
+    speed INT NOT NULL,
+    battery INT NOT NULL,
+    distance_to_obstacle INT NOT NULL
 );
+
+-- Insert for users table
+INSERT INTO
+    users (name, email, password)
+VALUES (
+        'Alice',
+        'alice@example.com',
+        'password1'
+    ),
+    (
+        'Maria',
+        'maria@example.com',
+        'password2'
+    ),
+    (
+        'Jorge',
+        'jorge@example.com',
+        'password3'
+    );
