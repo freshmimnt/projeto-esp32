@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
-import Register from "./components/Register"; // Import Register component
+import Register from "./components/Register"; 
 import Dashboard from "./components/Dashboard";
 import Teste from "./components/teste"
 import "./styles/global.css";

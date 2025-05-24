@@ -4,33 +4,19 @@ import "../styles/controlPanel.css";
 import socket from '../socket';
 
 const ControlPanel = () => {
-  const [mode, setMode] = useState("Manual");
-
-  const handleModeChange = (selectedMode) => {
-    setMode(selectedMode);
-    console.log(`Mode switched to: ${selectedMode}`);
-  };
-
   return (
     <div className="control-panel-container">
       <div className="control-container">
-        <h2>Control Panel - Mode: {mode}</h2>
+        <h2>Control Panel</h2>
 
         <div className="mode-buttons">
-          <button
-            className={mode === "Manual" ? "active" : ""}
-            onClick={() => handleModeChange("Manual")}
-          >
+          <button onClick={() => socket.emit('mode', 'MANUAL')} >
             Manual
           </button>
-          <button
-            className={mode === "Autonomous" ? "active" : ""}
-            onClick={() => handleModeChange("Autonomous")}
-          >
+          <button onClick={() => socket.emit('mode', 'AUTONOMOUS')} >
             Autonomous
           </button>
         </div>
-
         <div className="control-buttons">
           <button onClick={() => socket.emit('command', 'FORWARD')}>⬆ Forward</button>
           <div className="horizontal-buttons">
@@ -43,7 +29,6 @@ const ControlPanel = () => {
             <button className="start" onClick={() => socket.emit('command','START')}> Start</button>
           </div>
         </div>
-
         <div className="speed-buttons">
           <h3>Select Speed</h3>
           <div className="speed-options">

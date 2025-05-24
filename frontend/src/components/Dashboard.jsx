@@ -7,6 +7,7 @@ import "../styles/dashboard.css";
 const Dashboard = () => {
   const navigate = useNavigate();
 
+
   // Check if user is logged in
   useEffect(() => {
     const token = localStorage.getItem('token');

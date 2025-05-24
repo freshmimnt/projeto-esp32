@@ -18,18 +18,33 @@ const char *mqtt_password = "M#DJj5@CjJSzvWY";
 const char *topic_publish_ultrasonic = "esp32/ultrasonic_sensor";
 
 // MQTT subscribe topic
-const char *topic_subscribe = "esp32/receive";
+const char *topic_subscribe_direction = "esp32/vehicle/direction";
+const char *topic_subscribe_speed = "esp32/vehicle/speed";
 
 // Ultrasonic Sensor Pins
 #define TRIG_PIN 19 // ESP32 pin GPIO23 connected to Ultrasonic Sensor's TRIG pin
 #define ECHO_PIN 18 // ESP32 pin GPIO22 connected to Ultrasonic Sensor's ECHO pin
 
+// Speaker
+#define CMD_PLAY_NEXT 0x01
+#define CMD_PLAY_PREV 0x02
+#define CMD_PLAY_W_INDEX 0x03
+#define CMD_SET_VOLUME 0x06
+#define CMD_SEL_DEV 0x092
+#define CMD_PLAY_W_VOL 0x22
+#define CMD_PLAY 0x0D
+#define CMD_PAUSE 0x0E
+#define CMD_SINGLE_CYCLE 0x19
+#define DEV_TF 0x02
+#define SINGLE_CYCLE_ON 0x00
+#define SINGLE_CYCLE_OFF 0x01
+
 // Wheel Control
-String command;
 Motor forward(32, 22);
 Motor backward(33, 23);
 Motor right(32, 22);
 Motor left(32, 22);
+int currentSpeed = 0;
 
 // Create instances
 WiFiClientSecure wifiClient;
@@ -39,50 +54,75 @@ PubSubClient mqttClient(wifiClient);
 long previous_time = 0;
 
 // Variables for distance
-float duration_us, distance_cm;
+long duration_us, distance_cm;
 
+// MQTT subscribe to control direction and speed of the wheels
 void mqttCallback(char *topic, byte *payload, unsigned int length)
 {
-    command = ""; // Clear previous command
+    String message = "";
     for (unsigned int i = 0; i < length; i++)
     {
-        command += (char)payload[i];
+        message += (char)payload[i];
     }
-    command.trim(); // Remove any extra whitespace
+    message.trim();
+
     Serial.print("Message arrived [");
     Serial.print(topic);
     Serial.print("]: ");
-    Serial.println(command);
+    Serial.println(message);
 
-    if (command == "START")
+    // Controls the speed
+    if (String(topic) == topic_subscribe_speed)
     {
-        forward.motorMoving();
-        backward.motorStop();
-        Serial.println("FORWARD");
+        if (message == "SLOW")
+        {
+            currentSpeed = 100;
+        }
+        else if (message == "NORMAL")
+        {
+            currentSpeed = 180;
+        }
+        else if (message == "TURBO")
+        {
+            currentSpeed = 255;
+        }
+        Serial.print("Speed set to: ");
+        Serial.println(currentSpeed);
     }
-    else if (command == "BACKWARD")
+
+    // Controls the direction
+    else if (String(topic) == topic_subscribe_direction)
     {
-        backward.motorMoving();
-        forward.motorStop();
-        Serial.println("BACKWARD");
-    }
-    else if (command == "STOP")
-    {
-        forward.motorStop();
-        backward.motorStop();
-        Serial.println("STOP");
-    }
-    else if (command == "RIGHT")
-    {
-        right.motorRight();
-        backward.motorStop();
-        Serial.println("RIGHT");
-    }
-    else if (command == "LEFT")
-    {
-        left.motorLeft();
-        backward.motorStop();
-        Serial.println("LEFT");
+        if (message == "FORWARD")
+        {
+            forward.motorMoving(currentSpeed);
+            backward.motorStop(0);
+            Serial.println("FORWARD");
+        }
+        else if (message == "BACKWARD")
+        {
+            backward.motorMoving(currentSpeed);
+            forward.motorStop(0);
+            Serial.println("BACKWARD");
+        }
+        else if (message == "STOP")
+        {
+            forward.motorStop(0);
+            backward.motorStop(0);
+            Serial.println("STOP");
+        }
+        else if (message == "RIGHT")
+        {
+            right.motorRight(currentSpeed);
+            backward.motorStop(0);
+            Serial.println("RIGHT");
+        }
+        else if (message == "LEFT")
+        {
+            left.motorLeft(currentSpeed);
+            backward.motorStop(0);
+            Serial.println("LEFT");
+        }
     }
 }
 
@@ -106,7 +146,8 @@ void reconnect()
             Serial.println("Connected to MQTT Broker.");
 
             // Subscribe to the control topic
-            mqttClient.subscribe(topic_subscribe);
+            mqttClient.subscribe(topic_subscribe_direction);
+            mqttClient.subscribe(topic_subscribe_speed);
         }
         else
         {
@@ -121,7 +162,19 @@ void reconnect()
 void setup()
 {
     Serial.begin(9600);
-
+    Serial2.begin(9600, SERIAL_8N1, 16, 17);
+    delay(500); // Wait chip initialization is complete
+                /*
+                  // Code to control the MP3 Player
+                  mp3_command(CMD_SEL_DEV, DEV_TF);  // select the TF card
+                  delay(200);                        // wait for 200ms
+            
+                  mp3_command(CMD_PLAY, 0x0000);       // Play mp3
+                  //mp3_command(CMD_PAUSE, 0x0000);      // Pause mp3
+                  //mp3_command(CMD_PLAY_NEXT, 0x0000);  // Play next mp3
+                  //mp3_command(CMD_PLAY_PREV, 0x0000);  // Play previous mp3
+                  //mp3_command(CMD_SET_VOLUME, 30);     // Change volume to 30
+                */
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -158,7 +211,7 @@ void loop()
     // calculate the distance
     distance_cm = 0.017 * duration_us;
 
-    // Convert the distance from float to string
+    // Convert the distance from long to string
     String distance_cm_str = String(distance_cm);
 
     // Publish the sensor value to the MQTT topic
@@ -170,3 +223,20 @@ void loop()
 
     mqttClient.publish(topic_publish_ultrasonic, distance_cm_str.c_str());
 }
+
+/*
+void mp3_command(int8_t command, int16_t dat) {
+  int8_t frame[8] = { 0 };
+  frame[0] = 0x7e;                // starting byte
+  frame[1] = 0xff;                // version
+  frame[2] = 0x06;                // the number of bytes of the command without starting byte and ending byte
+  frame[3] = command;             //
+  frame[4] = 0x00;                // 0x00 = no feedback, 0x01 = feedback
+  frame[5] = (int8_t)(dat >> 8);  // data high byte
+  frame[6] = (int8_t)(dat);       // data low byte
+  frame[7] = 0xef;                // ending byte
+  for (uint8_t i = 0; i < 8; i++) {
+    Serial2.write(frame[i]);
+  }
+}
+*/
