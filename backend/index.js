@@ -15,11 +15,11 @@ const io = new Server(httpServer, {
   allowUpgrades: false
 });
 
-
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'http://localhost:5175', // Match your frontend dev server
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type'],
+  credentials: false // You are not using cookies
 }));
 
 app.use(express.json())
@@ -29,7 +29,6 @@ app.use(express.json());
 
 require('dotenv').config();
 
-// Import routes
 const userRoutes = require('./routes/users');
 app.use('/api/users', userRoutes);
 
