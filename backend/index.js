@@ -5,7 +5,7 @@ const dotenv = require('dotenv')
 const { createServer } = require("http");
 const { Server } = require('socket.io');
 const cors = require('cors');
-const userRoutes = require('./routes/users.js');
+
 
 const app = express();
 const httpServer = createServer(app);
@@ -15,29 +15,24 @@ const io = new Server(httpServer, {
   allowUpgrades: false
 });
 
-
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'http://localhost:5175', // Match your frontend dev server
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type'],
+  credentials: false // You are not using cookies
 }));
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
-app.use(cookieParser());
 
 require('dotenv').config();
 
-// Import routes
 const userRoutes = require('./routes/users');
 app.use('/api/users', userRoutes);
 
 const port = 3000;
-
-let ultrasonicValue = 0;
-let speed = 0;
 
 const client = mqtt.connect('mqtts://6ea8d26dbacc48a28de3a4d62b39e9fb.s1.eu.hivemq.cloud:8883', {
   username: process.env.MQTT_USERNAME,
@@ -56,34 +51,17 @@ client.on('close', () => {
   console.warn('MQTT Connection Closed');
 });
 
-// MQTT subscribe to receive the ultrasonic value
-client.subscribe('esp32/ultrasonic_sensor', (err) => {
-  if (err) {
-    console.error('Subscription error:', err.message);
-  } else {
-    console.log('Subscribed to topic: esp32/ultrasonic_sensor');
-  }
-});
-
-// MQTT subscribe to receive the speed value
-/*
-  client.subscribe('esp32/accelerometer_sensor', (err) =>{
-  if (err){
-    console.error('Subscription error', err.message);  
-  }  else{
-    console.log('Subscribed to topic: esp32/accelerometer_sensor') ; 
-  }
-});
-*/
+// MQTT subscribe to receive data from ESP32
+client.subscribe('esp32/sensorsData', { qos: 1 });
 
 client.on('message', (topic, message) => {
-  ultrasonicValue = parseFloat(message.toString());
-  console.log(`Received message from topic '${topic}': ${message.toString()}`);
-  io.emit('ultrasonicData', {distance: ultrasonicValue});
-});
+  const data = JSON.parse(message.toString());
+  const distance = data.distance;
+  const battery = data.battery;
+  const speed = data.speed;
+  const inclination = data.inclination;
 
-app.get('/api/ultrasonic', (req, res) => {
-  res.json({ distance: ultrasonicValue });
+  io.emit('vehicleData', { distance, battery, speed, inclination });
 });
 
 // MQTT publish to send the direction, speed and switch between manual and autonomous mode
