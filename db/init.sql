@@ -8,8 +8,7 @@ CREATE TABLE users (
 CREATE TABLE vehicles (
     id SERIAL PRIMARY KEY,
     id_user INT REFERENCES users (id) ON DELETE CASCADE,
-    is_active TEXT NOT NULL,
-    self_driving TEXT NOT NULL
+    driving_mode TEXT NOT NULL
 );
 
 CREATE TABLE sensors (
@@ -17,6 +16,7 @@ CREATE TABLE sensors (
     id_vehicle INT REFERENCES vehicles (id) ON DELETE CASCADE,
     speed INT NOT NULL,
     battery INT NOT NULL,
+    inclination INT NOT NULL,
     distance_to_obstacle INT NOT NULL
 );
 

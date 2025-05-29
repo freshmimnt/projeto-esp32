@@ -2,11 +2,11 @@
 
 ## Introdução
 
-Baseado no briefing recebido, o objetivo do projeto é construir um veículo com condução manual capaz de transportar carga de um ponto a outro, ultrapassando os obstáculos que terá pelo caminho.
+Com base no briefing recebido, o objetivo do projeto é construir um veículo com condução manual e autónoma capaz de transportar carga de um ponto a outro, ultrapassando os obstáculos presentes no percurso.
 
-Para alcançarmos esse propósito nós iremos construir um veículo manual e possivelmente autónomo equipado com um microcontrolador ESP32 e múltiplos sensores. O veículo suportara condução manual através de um Dashboard Web ou atraves de condução autonoma que poderá ser ativada no dashboard, no modeo autónomo o veículo utilizara os seus sensores para detetar e superar os obstáculos, medir a inclinação da rampa, calcular a velocidade e monitorizar os níveis de bateria.
+Para alcançarmos esse propósito, iremos desenvolver um veículo manual e autónomo, equipado com um microcontrolador ESP32 e múltiplos sensores. O veículo suportara condução manual onde ele é controlado através de um Dashboard Web, ou através de condução autónoma que poderá ser ativada no Dashboard Web, no modo autónomo o veículo utilizara os seus sensores para detetar e superar os obstáculos, medir a inclinação da rampa, calcular a velocidade e monitorizar o nível de bateria.
 
-O objetivo principal é criar um veículo capaz de transportar carga de maneira manual ou autónoma de maneira eficiente e segura, tendo a capacidade de navegar pelo ambiente e realizar o transporte de carga de maneira manual ou autónoma.
+O objetivo principal é criar um veículo capaz de transportar carga de forma manual ou autónoma de maneira eficiente e segura, tendo a capacidade de navegar pelo ambiente e levar a carga até ao fim do percurso.
 
 ## Levantamento de requisitos
 
@@ -16,7 +16,9 @@ Web Dashboard - Implementação de um dashboard que permita controlar e visualiz
 
 Controlo Manual – O veículo deve ser capaz de ser controlado de maneira manual, através do Dashboard Web.
 
-Transporte de carga – O veículo deve ser capaz de transportar carga de início ao fim.
+Controlo Autónomo – Deve ser possível ativar o modo autónomo do veículo através do dashboard Web.
+
+Transporte de carga – O veículo deve ser capaz de transportar carga do início ao fim do percurso.
 
 ### Requisitos não funcionais
 
@@ -32,21 +34,18 @@ Fiabilidade – O ESP32 deve detetar com exatidão os obstáculos utilizando os 
 
 ESP32
 
-Sensores – Ultrassonic Sensor , MPU6050
+Sensores – Ultrassonic Sensor, MPU6050, Voltage Sensor,
 
-Atuadores – DFPLAYER Mini , Motores TT
+Atuadores – Motores TT, Servo Motor,
 
-### Software
+### Descrição da arquitetura implementada
 
-PostgreSQL através de docker compose – O nosso sistema utilizará uma base de dado em PostgreSQL, implementada em docker compose. A nossa base de dados irá guardar as informações geradas pelo veículo e os seus sensores.
+A estrutura foi pensada na eficácia e facilidade de uso. O veículo é controlado através de um Dashboard Web, e utiliza sensores para detetar os obstáculos, medir a inclinação da rampa, calcular a velocidade e monitorizar o nível de bateria.
 
-MTTQ (Hive MQ) - Nós usaremos o protocolo MQTT para a comunicação entre o backend e o esp32, decidimos usar este protocolo devido sua eficiencia e baixo consumo de recursos.
+Temos um Esp32 responsável pela recolha dos dados dos sensores e controlar os atuadores do veículo, ele está a ser programado usando o Arduino IDE. A comunicação entre o Esp32 e o backend é realizada usando o protocolo MQTT com recurso ao broker HiveMQ.
 
-Front-end - O nosso Web Dashboard será feito usando Vite com a framework React. Através do Dashboard o usuario poderá controlar o véiculo manualmente ou escolher condução autnomoma, ainda terá a capacidade de ver em tempo real os dados transmitidos pelo ESP32, tais como a velocidade, nivel da bateria, inclinação da rampa, entre outros.
+O Backend desenvolvido em Nodejs, possui 2 camadas principais, uma REST API que trata do registo e login do utlizador, e uma camada de comunicação em tempo real com o frontend via socket.io, que transmite os dados dos sensores e comandos do utlizador através do broker MQTT, no login e registo utilizamos Lex e Yacc para realizar a análise léxica e sintática das entradas do utilizador para garantir que eles seguem as regras que nós estabelecemos.
 
-Back-end - O backend que será desenvolvido em NodeJS será responsavel por:
+A nossa Base de Dados armazena as informações dos utilizadores e dos sensores e ela está a ser implementada utilizando Docker Compose.
 
-Receber os dados enviados pelo ESP32 através de MQTT;
-
-Processar e guardar esses dados na base de dados;
- 
+Frontend feito usando Vite com React, que serve para desenvolver o Dashboard Web permitindo o utilizador fazer Registo, Login ou controlar o veículo seja de maneira manual ou autónoma, o dashboard também exibe dados em tempo real trasmitidos pelo Esp32.
