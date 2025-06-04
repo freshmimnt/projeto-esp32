@@ -18,15 +18,14 @@ const ControlPanel = () => {
           </button>
         </div>
         <div className="control-buttons">
-          <button onClick={() => socket.emit('command', 'FORWARD')}>⬆ Forward</button>
+          <button onClick={() => socket.emit('command', 'FORWARD')}>Forward</button>
           <div className="horizontal-buttons">
-            <button onClick={() => socket.emit('command','LEFT')}>⬅ Left</button>
+            <button onClick={() => socket.emit('command','LEFT')}> Left</button>
             <button onClick={() => socket.emit('command','RIGHT')}> Right</button>
           </div>
-          <button onClick={() => socket.emit('command','BACKWARD')}>⬇ Backward</button>
+          <button onClick={() => socket.emit('command','BACKWARD')}>Backward</button>
           <div className="action-buttons">
-            <button className="stop" onClick={() => socket.emit('command','STOP')}>⏹ Stop</button>
-            <button className="start" onClick={() => socket.emit('command','START')}> Start</button>
+            <button className="stop" onClick={() => socket.emit('command','STOP')}>Stop</button>
           </div>
         </div>
         <div className="speed-buttons">

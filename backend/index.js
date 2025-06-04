@@ -1,7 +1,8 @@
-const express = require('express')
-const mqtt = require('mqtt')
+const express = require('express');
+const mqtt = require('mqtt');
 const pool = require('./db');
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
+const userRoutes = require('./routes/users');
 const { createServer } = require("http");
 const { Server } = require('socket.io');
 const cors = require('cors');
@@ -16,20 +17,18 @@ const io = new Server(httpServer, {
 });
 
 app.use(cors({
-  origin: 'http://localhost:5175', // Match your frontend dev server
+  origin: 'http://localhost:5173', 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type'],
-  credentials: false // You are not using cookies
+  credentials: false 
 }));
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 require('dotenv').config();
 
-const userRoutes = require('./routes/users');
 app.use('/api/users', userRoutes);
 
 const port = 3000;
@@ -52,7 +51,7 @@ client.on('close', () => {
 });
 
 // MQTT subscribe to receive data from ESP32
-client.subscribe('esp32/sensorsData', { qos: 1 });
+client.subscribe('esp32/sensorsData',);
 
 client.on('message', (topic, message) => {
   const data = JSON.parse(message.toString());
@@ -60,6 +59,18 @@ client.on('message', (topic, message) => {
   const battery = data.battery;
   const speed = data.speed;
   const inclination = data.inclination;
+
+  /*pool.query(
+    'INSERT INTO sensors (speed, battery, inclination, distance_to_obstacle) VALUES ($1, $2, $3, $4)',
+    [speed, battery, inclination, distance],
+    (err) => {
+      if (err) {
+        console.error('Error inserting data into database:', err);
+      } else {
+        console.log('Data inserted into database successfully');
+      }
+    }
+  );*/
 
   io.emit('vehicleData', { distance, battery, speed, inclination });
 });
@@ -86,28 +97,21 @@ io.on('connection', (socket) => {
         console.log('Speed published');
       }
     });
+  });
 
-    socket.on('mode', (mode) => {
-      client.publish('esp32/vehicle/mode', mode, { retain: true }, (err) => {
-        console.log(`Received mode from frontend: ${mode}`);
-        if (err) {
-          console.error('Failed to publish message:', err);
-        } else {
-          console.log('Mode published');
-        }
-      });
+  socket.on('mode', (mode) => {
+    client.publish('esp32/vehicle/mode', mode, { retain: true }, (err) => {
+      console.log(`Received mode from frontend: ${mode}`);
+      if (err) {
+        console.error('Failed to publish message:', err);
+      } else {
+        console.log('Mode published');
+      }
     });
   });
 });
 
-//you can put the login, register and logout endpoint below this comment
-app.use('/api/users', userRoutes);
 
-/*get
-  difference between the start time and end time
-*/
-
-//NC35HJ49NE sock
 
 httpServer.listen(port, () => console.log(`Example app listening on http://localhost:3000`));
 
