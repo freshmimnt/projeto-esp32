@@ -60,7 +60,7 @@ client.on('message', (topic, message) => {
   const speed = data.speed;
   const inclination = data.inclination;
 
-  pool.query(
+  /*pool.query(
     'INSERT INTO sensors (speed, battery, inclination, distance_to_obstacle) VALUES ($1, $2, $3, $4)',
     [speed, battery, inclination, distance],
     (err) => {
@@ -70,7 +70,7 @@ client.on('message', (topic, message) => {
         console.log('Data inserted into database successfully');
       }
     }
-  );
+  );*/
 
   io.emit('vehicleData', { distance, battery, speed, inclination });
 });
@@ -97,19 +97,21 @@ io.on('connection', (socket) => {
         console.log('Speed published');
       }
     });
+  });
 
-    socket.on('mode', (mode) => {
-      client.publish('esp32/vehicle/mode', mode, { retain: true }, (err) => {
-        console.log(`Received mode from frontend: ${mode}`);
-        if (err) {
-          console.error('Failed to publish message:', err);
-        } else {
-          console.log('Mode published');
-        }
-      });
+  socket.on('mode', (mode) => {
+    client.publish('esp32/vehicle/mode', mode, { retain: true }, (err) => {
+      console.log(`Received mode from frontend: ${mode}`);
+      if (err) {
+        console.error('Failed to publish message:', err);
+      } else {
+        console.log('Mode published');
+      }
     });
   });
 });
+
+
 
 httpServer.listen(port, () => console.log(`Example app listening on http://localhost:3000`));
 
